@@ -19,7 +19,7 @@
 
             <div class="inputWrapper" @click="showCategoryDialog=true">
                 <div class="inputTitle categoryTitle">分类</div>
-                <div class="category">{{category}}</div>
+                <div class="category" @click="showCategoryDialog=true">{{category}}</div>
             </div>
 
             <div class="inputWrapper">
@@ -32,7 +32,7 @@
 
         <button class="saveButton" @click="onSave">保存</button>
         <Calculator :is-show.sync="showCalculator" v-on:onOkClick="onOkClick"></Calculator>
-
+        <CategorySelectDialog :type="type" :isShow.sync="showCategoryDialog" v-on:update:category="(category)=>this.category=category"></CategorySelectDialog>
     </LayoutWithBackAndTitle>
 </template>
 
@@ -40,6 +40,7 @@
     import Calculator from '@/components/Calculator.vue';
     import Vue from 'vue';
     import {Component, Watch} from 'vue-property-decorator';
+    import CategorySelectDialog from '@/components/add-transaction/CategorySelectDialog.vue'
 
     function getQueryString(name: string) {
         const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
@@ -61,14 +62,19 @@
     };
 
     @Component({
-        components: {Calculator}
+        components: {Calculator,CategorySelectDialog}
     })
     export default class AddTransaction extends Vue {
         money = getQueryString('money');
         currentTypeIndex = 0;
         showCalculator = false;
-        category = '待定';
+        category = this.$store.state.categories[this.type][0];
         note = '';
+        showCategoryDialog = false;
+
+        get type(){
+            return ["expenditure","income"][this.currentTypeIndex];
+        }
 
         onOkClick(money: string) {
             this.money = money;
@@ -80,11 +86,15 @@
             // console.log(transactionsModel.fetch())
         }
 
+        beforeCreate(){
+            this.$store.commit('fetchCategories')
+        }
+
         @Watch('currentTypeIndex')
         onCurrentTypeIndexChanged(val: number, oldVal: number) {
-            console.log(`currentTypeIndex changed: ${oldVal} -> ${val}`);
-            return 0;
+            this.category = this.$store.state.categories[this.type][0];
         }
+
     }
 </script>
 

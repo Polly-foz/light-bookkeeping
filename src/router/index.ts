@@ -4,7 +4,9 @@ import Home from '@/views/Home.vue'
 import Statistics from '@/views/Statistics.vue'
 import AddTransaction from '@/views/AddTransaction.vue'
 import Transactions from '@/views/Transactions.vue'
+import Categories from '@/views/Categories.vue'
 import NotFound from '@/views/NotFound.vue'
+
 
 Vue.use(VueRouter)
 
@@ -28,6 +30,10 @@ const routes = [
   {
     path: '/transactions',
     component: Transactions
+  },
+  {
+    path: '/categories',
+    component: Categories
   },
   {
     path: '*',
