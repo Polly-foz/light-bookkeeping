@@ -44,7 +44,7 @@
 </script>
 
 <style lang="scss" scoped>
-    @import "@/assets/style/helper.scss";
+    @import "~@/assets/style/helper.scss";
 
     .layoutWithBackAndTitle {
         display: -webkit-box;
@@ -70,7 +70,7 @@
         display: flex;
         justify-content: space-between;
         font-size: 1rem;
-        padding: 1rem;
+        padding: 1rem 0rem 1rem 1rem;
     }
 
     .firstTitleName {
@@ -83,7 +83,6 @@
     .left {
         display: flex;
         position: relative;
-
         .back {
             text-align: center;
             position: relative;
@@ -96,11 +95,11 @@
 
     .right {
         display: flex;
+        flex-direction: row;
         justify-content: center;
         align-items: center;
-
         .icon {
-            margin-left: 1rem;
+            margin: 0 0.5rem;
             font-size: $font-size-title-icon;
         }
     }

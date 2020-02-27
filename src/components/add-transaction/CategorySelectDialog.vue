@@ -7,8 +7,8 @@
                 <button v-for="tag in categories" v-bind:key="tag" class="category" @click="selectCategory">{{tag}}
                 </button>
             </div>
-            <button class="addCategories" v-if="showAdd" @click="addCategory">添加标签</button>
-            <router-link to="categories" v-if="showManage" class="manageCategoriesWrapper">
+            <button class="addCategoryButton" v-if="showAddOrManage" @click="addCategory">添加标签</button>
+            <router-link to="categories" v-if="!showAddOrManage" class="manageCategoriesWrapper">
                 <div class="manageCategoriesButton">管理分类</div>
             </router-link>
         </div>
@@ -24,16 +24,22 @@
         @Prop(String) readonly type: string | undefined;
 
         category = '';
-        showAdd = false;
-        showManage = true;
         categories = this.$store.state.categories.expenditure;
+
+        get showAddOrManage() {//true:add, false:manage
+            if (this.categories.length === 0 && this.category.length > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
         beforeCreate() {
             this.$store.commit('fetchCategories');
         }
 
-        updated(){
-            if(Boolean(this.$attrs.isShow) === false){
+        updated() {
+            if (Boolean(this.$attrs.isShow) === false) {
                 this.category = '';
             }
         }
@@ -46,12 +52,8 @@
         }
 
         addCategory() {
-            console.log('尝试添加标签');
             //TODO add category
-            const res = false;
-            if (!res) {
-                window.alert('添加失败，该标签已存在');
-            }
+            this.$store.commit('addCategory', {type: this.type, category: this.category});
             this.category = '';
         }
 
@@ -62,14 +64,15 @@
             } else {
                 this.categories = this.type &&
                     this.$store.state.categories[this.type]
-                        .filter((item: string) => item.indexOf(val)>=0)
+                        .filter((item: string) => item.indexOf(val) >= 0);
             }
         }
 
         @Watch('type')
-        onTypeChanged(val: string){
+        onTypeChanged(val: string) {
             this.categories = this.type && this.$store.state.categories[this.type];
         }
+
     }
 
     /*export default {
@@ -169,7 +172,7 @@
         justify-content: center;
     }
 
-    .manageCategoriesButton {
+    .manageCategoriesButton, .addCategoryButton {
         color: $color-green;
         padding: 0.5rem;
         font-size: 1rem;

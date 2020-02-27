@@ -1,11 +1,7 @@
 export default {
     state: {
-        cnt: 10
+        transactions:[]
     },
     mutations: {
-        increment(state: { cnt: number }) {
-            console.log("transaction increment")
-            state.cnt++;
-        }
     }
 };

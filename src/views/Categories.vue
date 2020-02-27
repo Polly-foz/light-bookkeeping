@@ -4,6 +4,11 @@
         <template v-slot:icons>
             <div @click="changeState(false)">
                 <Icon v-if="!inDeleteState" name="multiSelect"></Icon>
+            </div>
+            <div @click="editCategory">
+                <Icon v-if="showEdit" name="edit" ></Icon>
+            </div>
+            <div @click="changeState(false)">
                 <Icon v-if="inDeleteState" name="delete"></Icon>
             </div>
         </template>
@@ -28,7 +33,7 @@
                     删除分类
                 </h1>
                 <div class="deleteConfirmDialog-content">
-                    将删除{{deleteMap.size}}个分类
+                    将删除{{selectedList.size}}个分类
                 </div>
                 <div class="deleteConfirmDialog-buttons">
                     <button @click="showDeleteConfirm=false">取消</button>
@@ -48,19 +53,36 @@
     export default class Categories extends Vue {
         currentTypeIndex = 0;
         inDeleteState = false;
-        deleteMap = new Map();
+        selectedList = [] as string[];
         showDeleteConfirm = false;
 
         get categories() {
-            if(this.currentTypeIndex === 0){
+            if (this.currentTypeIndex === 0) {
                 return this.$store.state.categories.expenditure;
-            }else{
+            } else {
                 return this.$store.state.categories.income;
             }
         }
 
+        get type() {
+            return ['expenditure', 'income'][this.currentTypeIndex];
+        }
+
+        get showEdit() {
+            if(this.selectedList.length === 1){
+                return true
+            }
+            return false;
+        }
+
+        editCategory(){
+            return;
+        }
+
         deleteCategories() {
             //TODO delete
+            this.$store.commit('deleteCategories', {type: this.type, categories: this.selectedList});
+            this.selectedList.splice(0,this.selectedList.length)
             this.showDeleteConfirm = false;
             this.inDeleteState = false;
         }
@@ -70,14 +92,14 @@
             // console.log('~~~changeState')
             if (fromTabChanged === true) {
                 this.inDeleteState = false;
-                this.deleteMap.clear();
+                this.selectedList.splice(0,this.selectedList.length);
                 return;
             }
             if (this.inDeleteState === false) {
                 this.inDeleteState = true;
                 return;
             }
-            if (this.deleteMap.size === 0) {
+            if (this.selectedList.length === 0) {
                 this.inDeleteState = false;
                 return;
             }
@@ -91,10 +113,11 @@
             }
             if (event && event.target && (event.target as Element).className.indexOf('categorySelected') >= 0) {
                 (event.target as Element).className = 'categoryWrapper categoryNotSelected';
-                this.deleteMap.delete(category);
+                const index = this.selectedList.indexOf(category)
+                this.selectedList.splice(index,1);
             } else if (event) {
                 (event.target as Element).className = 'categoryWrapper categorySelected';
-                this.deleteMap.set(category, true);
+                this.selectedList.push(category);
             }
         }
 
@@ -104,8 +127,8 @@
             this.changeState(true);
         }
 
-        created(){
-            this.$store.commit('fetchCategories')
+        created() {
+            this.$store.commit('fetchCategories');
         }
 
         @Watch('inDeleteState')

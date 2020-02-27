@@ -32,7 +32,8 @@
 
         <button class="saveButton" @click="onSave">保存</button>
         <Calculator :is-show.sync="showCalculator" v-on:onOkClick="onOkClick"></Calculator>
-        <CategorySelectDialog :type="type" :isShow.sync="showCategoryDialog" v-on:update:category="(category)=>this.category=category"></CategorySelectDialog>
+        <CategorySelectDialog :type="type" :isShow.sync="showCategoryDialog"
+                              v-on:update:category="(category)=>this.category=category"></CategorySelectDialog>
     </LayoutWithBackAndTitle>
 </template>
 
@@ -40,7 +41,7 @@
     import Calculator from '@/components/Calculator.vue';
     import Vue from 'vue';
     import {Component, Watch} from 'vue-property-decorator';
-    import CategorySelectDialog from '@/components/add-transaction/CategorySelectDialog.vue'
+    import CategorySelectDialog from '@/components/add-transaction/CategorySelectDialog.vue';
 
     function getQueryString(name: string) {
         const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
@@ -52,6 +53,7 @@
         return null;
     }
 
+
     // 下面的代码解决弹出键盘时，按钮向上移动
     const h = document.body.scrollHeight;
     window.onresize = function () {
@@ -62,7 +64,7 @@
     };
 
     @Component({
-        components: {Calculator,CategorySelectDialog}
+        components: {Calculator, CategorySelectDialog}
     })
     export default class AddTransaction extends Vue {
         money = getQueryString('money');
@@ -72,8 +74,8 @@
         note = '';
         showCategoryDialog = false;
 
-        get type(){
-            return ["expenditure","income"][this.currentTypeIndex];
+        get type() {
+            return ['expenditure', 'income'][this.currentTypeIndex];
         }
 
         onOkClick(money: string) {
@@ -86,8 +88,11 @@
             // console.log(transactionsModel.fetch())
         }
 
-        beforeCreate(){
-            this.$store.commit('fetchCategories')
+        beforeCreate() {
+            this.$store.commit('fetchCategories');
+            //test
+            // this.$store.commit('addCategory',{type:'expenditure',category:'cola'})
+            // this.$store.commit('editCategory',{type:'expenditure',oldName:'cola',newName:'hhh'})
         }
 
         @Watch('currentTypeIndex')
