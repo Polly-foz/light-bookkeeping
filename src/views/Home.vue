@@ -2,17 +2,21 @@
     <LayoutWithNav class="home">
         <template v-slot:title>主页</template>
         <template v-slot:icons>
-            <Icon name="search" class="icon"/>
+            <div @click="showInitConfirmDialog=true">
+                <Icon name="init" class="icon"/>
+            </div>
         </template>
         <div class="main">
-            <TodayTransactions/>
+            <RecentTransactions/>
             <IncomeAndExpenditure/>
         </div>
 
-        <button v-on:click="isShow = true">
+        <button v-on:click="showCalculator = true">
             <Icon name="add" class="addTransaction"/>
         </button>
-        <Calculator :is-show.sync="isShow" v-on:onCalculatorOkClicked="onCalculatorOkClicked"></Calculator>
+
+        <InitConfirmDialog :isShow.sync="showInitConfirmDialog" v-on:initConfirm="onInitConfirm"/>
+        <Calculator :is-show.sync="showCalculator" v-on:onCalculatorOkClicked="onCalculatorOkClicked"></Calculator>
     </LayoutWithNav>
 </template>
 
@@ -20,14 +24,21 @@
     import Calculator from '@/components/Calculator.vue';
     import {Component} from 'vue-property-decorator';
     import Vue from 'vue';
-    import TodayTransactions from '@/components/home/RecentTransactions.vue';
+    import RecentTransactions from '@/components/home/RecentTransactions.vue';
     import IncomeAndExpenditure from '@/components/home/IncomeAndExpenditure.vue';
+    import InitConfirmDialog from '@/components/home/InitConfirmDialog.vue';
 
     @Component({
-        components: {IncomeAndExpenditure, Calculator,TodayTransactions}
+        components: {InitConfirmDialog, IncomeAndExpenditure, Calculator,RecentTransactions}
     })
     export default class Home extends Vue {
-        isShow = false;
+        showCalculator = false;
+        showInitConfirmDialog = false;
+
+        onInitConfirm(){
+            this.$store.commit('initTransactions')
+            this.$store.commit('initCategories')
+        }
 
         onCalculatorOkClicked(money: number) {
             this.$router.push({path: 'addTransaction', query: {money: money.toString()}});

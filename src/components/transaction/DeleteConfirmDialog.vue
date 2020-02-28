@@ -1,6 +1,6 @@
 <template>
     <DialogWithCover v-bind="$attrs" v-on="$listeners">
-        <div class="deleteConfirmDialog">
+        <div class="initConfirmDialog">
             <div class="content">
                 你确定要删除这个交易？
             </div>
@@ -28,7 +28,7 @@
 
 <style lang="scss" scoped>
     @import "~@/assets/style/helper.scss";
-    .deleteConfirmDialog {
+    .initConfirmDialog {
         z-index: 300;
         background-color: white;
         position: absolute;

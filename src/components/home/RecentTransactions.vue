@@ -40,11 +40,9 @@
             const x = this.$store.getters.dateArray().sort();
             if (!x || x.length === 0) {
                 this.show = false;
-                console.log('don\'t show');
                 return null;
             } else {
                 this.show = true;
-                console.log('show');
                 return x[x.length - 1];
             }
         }

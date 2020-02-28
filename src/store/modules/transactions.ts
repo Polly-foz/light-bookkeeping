@@ -63,7 +63,7 @@ export default {
                     return state.transactions;
                 }
                 return state.transactions.filter(transaction => {
-                    return now.isSame(transaction.date, scope);
+                    return transaction.date && now.isSame(transaction.date, scope);
                 });
             };
         },
@@ -115,18 +115,14 @@ export default {
         }
     },
     mutations: {
+        initTransactions(state: StateType) {
+            state.transactions = initialTransactions();
+            // @ts-ignore
+            this.commit('saveTransactions');
+        },
         fetchTransactions(state: StateType) {
             const localTransactions = localStorage.getItem(localStorageKeyName);
-            if (localTransactions) {
-                state.transactions = JSON.parse(localTransactions);
-            }
-            if (state.transactions.length === 0) {
-                state.transactions = initialTransactions();
-            }
-            if (!localTransactions) {
-                //@ts-ignore
-                this.commit('saveTransactions');
-            }
+            state.transactions = localTransactions ? JSON.parse(localTransactions) : [];
         },
         saveTransactions(state: StateType) {
             localStorage.setItem(localStorageKeyName, JSON.stringify(state.transactions));
@@ -185,6 +181,18 @@ export default {
             }
             state.transactions.splice(index, 1);
             // @ts-ignore
+            this.commit('saveTransactions');
+        },
+        deleteTransactionsByTransactions(state: StateType, transactions: Transaction[]) {
+            state.transactions = state.transactions.filter(transaction => {
+                for (let i = 0; i < transactions.length; i++) {
+                    if (transactions[i].id === transaction.id) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            //@ts-ignore
             this.commit('saveTransactions');
         },
         deleteTransactionsOnCategoryDeleted(state: StateType, payload: { category: string; type: string }) {

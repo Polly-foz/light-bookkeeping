@@ -1,15 +1,12 @@
 <template>
     <DialogWithCover v-bind="$attrs" v-on="$listeners">
         <div class="initConfirmDialog">
-            <h1 class="title">
-                删除分类
-            </h1>
             <div class="content">
-                将删除{{selectedListLength}}个分类和{{selectedTransactionsLength}}个交易
+                确认要删除{{title}}吗？
             </div>
             <div class="buttons">
                 <button @click="$emit('update:isShow', false)">取消</button>
-                <button @click="$emit('deleteCategories')">删除</button>
+                <button @click="onDeleteClicked">删除</button>
             </div>
         </div>
     </DialogWithCover>
@@ -18,12 +15,19 @@
 <script>
     export default {
         name: "DeleteConfirmDialog",
-        props: ['selectedListLength','selectedTransactionsLength']
+        props: ['selectedListLength', 'selectedTransactionsLength','title'],
+        methods: {
+            onDeleteClicked() {
+                this.$emit('deleteAllTransactions')
+                this.$emit('update:isShow')
+            }
+        }
     }
 </script>
 
 <style lang="scss" scoped>
     @import "~@/assets/style/helper.scss";
+
     .initConfirmDialog {
         z-index: 300;
         background-color: white;
@@ -35,12 +39,9 @@
         padding: 1rem;
         text-align: left;
 
-        .title {
-            margin-bottom: 1rem;
-        }
-
         .content {
             margin-bottom: 1rem;
+            padding: 0.5rem;
         }
 
         .buttons {
@@ -49,7 +50,7 @@
 
             button {
                 width: 100%;
-                padding: 1rem;
+                padding: 0.5rem;
             }
 
             :first-child {

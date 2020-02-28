@@ -1,6 +1,9 @@
 <template>
     <LayoutWithBackAndTitle>
         <template v-slot:title>{{title}}</template>
+        <template v-slot:icons>
+            <div @click="showDeleteConfirmDialog=true"><Icon name="delete"/></div>
+        </template>
         <div>
             <div class="groupTitle">
                 <div class="date">共计{{transactions.length}}笔交易</div>
@@ -51,6 +54,7 @@
                 </ol>
             </li>
         </ol>
+        <DeleteConfirmDialog :title="title" :isShow.sync="showDeleteConfirmDialog" v-on:deleteAllTransactions="deleteAllTransactions"/>
     </LayoutWithBackAndTitle>
 </template>
 
@@ -60,10 +64,14 @@
     import {getQueryString} from '@/lib/urlHelper';
     import dateHelper from '@/lib/dateHelper';
     import {formatFloat} from '@/lib/stringHelper';
-
-    @Component
+    import DeleteConfirmDialog from '@/components/transactions/DeleteConfirmDialog.vue';
+    @Component({
+        components: {DeleteConfirmDialog}
+    })
     export default class Transactions extends Vue {
         scope = getQueryString('scope');
+
+        showDeleteConfirmDialog = false;
 
         get title() {
             switch (this.scope) {
@@ -94,6 +102,10 @@
 
         get totalAmount() {
             return this.$store.getters.scopedTotalAmount(this.scope);
+        }
+
+        deleteAllTransactions(){
+            this.$store.commit('deleteTransactionsByTransactions',this.transactions)
         }
 
         onTransactionClicked(id: number){
@@ -136,6 +148,8 @@
             this.$store.commit('fetchTransactions');
             this.$store.commit('fetchCategories');
         }
+
+
     }
 </script>
 

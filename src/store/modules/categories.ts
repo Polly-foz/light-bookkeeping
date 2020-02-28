@@ -14,6 +14,12 @@ export default {
         expenditure: [],
     },
     mutations: {
+        initCategories(state: StateType) {
+            state.income = ['工资', '利息', '投资', '奖金', '兼职'];
+            state.expenditure = ['公共交通', '食物&餐饮', '通信费', '房租', '生活用品', '医疗保健', '衣物配饰', '妆容护理'];
+            //@ts-ignore
+            this.commit('saveCategories');
+        },
         fetchCategories(state: StateType) {
             const localIncome = window.localStorage.getItem(localStorageKeyName.income);
             state.income = localIncome ? JSON.parse(localIncome) : ['工资', '利息', '投资', '奖金', '兼职'];
@@ -48,7 +54,7 @@ export default {
                 const index = state[type].indexOf(item);
                 if (index >= 0) {
                     //@ts-ignore
-                    this.commit('deleteTransactionsOnCategoryDeleted',{category: item, type:type});
+                    this.commit('deleteTransactionsOnCategoryDeleted', {category: item, type: type});
                     state[type].splice(index, 1);
                 }
             });
@@ -62,7 +68,7 @@ export default {
                 return;
             }
             //@ts-ignore
-            this.commit('deleteTransactionsOnCategoryDeleted',payload);
+            this.commit('deleteTransactionsOnCategoryDeleted', payload);
             state[type].splice(index, 1);
             // @ts-ignore
             this.commit('saveCategories');
