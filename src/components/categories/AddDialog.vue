@@ -2,9 +2,9 @@
     <DialogWithCover v-bind="$attrs" v-on="$listeners">
         <div class="addDialog">
             <h1 class="title">
-                重命名
+                创建{{type==='expenditure'?'支出':'收入'}}分类
             </h1>
-            <input class="categoryName" type="text" :placeholder="oldName" v-model="newName">
+            <input class="categoryName" type="text" v-model="category">
             <button @click="onCompleted">完成</button>
         </div>
     </DialogWithCover>
@@ -15,14 +15,14 @@
     import Vue from 'vue';
 
     @Component
-    export default class EditDialog extends Vue {
-        @Prop(String) readonly oldName: string | undefined;
+    export default class AddDialog extends Vue {
+        @Prop(String) readonly type: string | undefined;
 
-        newName = '';
+        category = '';
 
         onCompleted() {
-            this.$emit('editCategory', this.newName);
-            this.newName = '';
+            this.$emit('addCategory', this.category);
+            this.category = '';
         }
     }
 </script>

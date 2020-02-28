@@ -42,17 +42,7 @@
     import Vue from 'vue';
     import {Component, Watch} from 'vue-property-decorator';
     import CategorySelectDialog from '@/components/add-transaction/CategorySelectDialog.vue';
-
-    function getQueryString(name: string) {
-        const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-        const index = window.location.href.indexOf('?');
-        const r = window.location.href.substr(index + 1).match(reg);
-        if (r != null) {
-            return unescape(r[2]);
-        }
-        return null;
-    }
-
+    import {getQueryString} from '@/lib/urlHelper';
 
     // 下面的代码解决弹出键盘时，按钮向上移动
     const h = document.body.scrollHeight;

@@ -3,13 +3,13 @@
         <template v-slot:title>分类</template>
         <template v-slot:icons>
             <div @click="changeState(false)">
-                <Icon v-if="!inDeleteState" name="multiSelect"></Icon>
+                <Icon v-if="!inSelectState" name="multiSelect"></Icon>
             </div>
-            <div @click="editCategory">
-                <Icon v-if="showEdit" name="edit" ></Icon>
+            <div @click="showEditDialog = true">
+                <Icon v-if="showEdit" name="edit"></Icon>
             </div>
             <div @click="changeState(false)">
-                <Icon v-if="inDeleteState" name="delete"></Icon>
+                <Icon v-if="inSelectState" name="delete"></Icon>
             </div>
         </template>
         <template v-slot:subtitle>
@@ -27,20 +27,13 @@
                 </div>
             </div>
         </main>
-        <DialogWithCover :isShow.sync="showDeleteConfirm">
-            <div class="deleteConfirmDialog">
-                <h1 class="deleteConfirmDialog-title">
-                    删除分类
-                </h1>
-                <div class="deleteConfirmDialog-content">
-                    将删除{{selectedList.size}}个分类
-                </div>
-                <div class="deleteConfirmDialog-buttons">
-                    <button @click="showDeleteConfirm=false">取消</button>
-                    <button @click="deleteCategories">删除</button>
-                </div>
-            </div>
-        </DialogWithCover>
+
+        <EditDialog :oldName="selectedList[0]" :isShow.sync="showEditDialog"
+                    v-on:editCategory="editCategory"></EditDialog>
+        <DeleteConfirmDialog :selected-list-length="selectedList.length" :isShow.sync="showDeleteConfirm"
+                             v-on:deleteCategories="deleteCategories"></DeleteConfirmDialog>
+        <AddDialog :type="type" :isShow.sync="showAddDialog" v-on:addCategory="addCategory"></AddDialog>
+        <button v-if="!inSelectState" @click="showAddDialog=true"><Icon name="add" class="addCategory"/></button>
     </LayoutWithBackAndTitle>
 </template>
 
@@ -48,13 +41,20 @@
 
     import {Component, Watch} from 'vue-property-decorator';
     import Vue from 'vue';
+    import DeleteConfirmDialog from '@/components/categories/DeleteConfirmDialog.vue';
+    import EditDialog from '@/components/categories/EditDialog.vue';
+    import AddDialog from '@/components/categories/AddDialog.vue';
 
-    @Component
+    @Component({
+        components: {DeleteConfirmDialog, EditDialog,AddDialog}
+    })
     export default class Categories extends Vue {
         currentTypeIndex = 0;
-        inDeleteState = false;
+        inSelectState = false;
         selectedList = [] as string[];
         showDeleteConfirm = false;
+        showEditDialog = false;
+        showAddDialog = false;
 
         get categories() {
             if (this.currentTypeIndex === 0) {
@@ -69,52 +69,72 @@
         }
 
         get showEdit() {
-            if(this.selectedList.length === 1){
-                return true
+            if (this.selectedList.length === 1) {
+                return true;
             }
             return false;
         }
 
-        editCategory(){
+        addCategory(name: string) {
+            // console.log(newName);
+            try {
+                this.$store.commit('addCategory', {type: this.type, category: name});
+                this.showAddDialog = false;
+            } catch (error) {
+                window.alert(error);
+            }
+            return;
+        }
+
+        editCategory(newName: string) {
+            // console.log(newName);
+            try {
+                this.$store.commit('editCategory', {type: this.type, oldName: this.selectedList[0], newName: newName});
+                this.showEditDialog = false;
+                this.changeState(true)
+            } catch (error) {
+                window.alert(error);
+            }
             return;
         }
 
         deleteCategories() {
             //TODO delete
             this.$store.commit('deleteCategories', {type: this.type, categories: this.selectedList});
-            this.selectedList.splice(0,this.selectedList.length)
+            this.selectedList.splice(0, this.selectedList.length);
             this.showDeleteConfirm = false;
-            this.inDeleteState = false;
+            this.inSelectState = false;
         }
 
 
-        changeState(fromTabChanged: boolean) {
+        changeState(reset: boolean) {
             // console.log('~~~changeState')
-            if (fromTabChanged === true) {
-                this.inDeleteState = false;
-                this.selectedList.splice(0,this.selectedList.length);
+            if (reset === true) {
+                this.inSelectState = false;
+                this.selectedList.splice(0, this.selectedList.length);
                 return;
             }
-            if (this.inDeleteState === false) {
-                this.inDeleteState = true;
+            if (this.inSelectState === false) {
+                this.inSelectState = true;
                 return;
             }
             if (this.selectedList.length === 0) {
-                this.inDeleteState = false;
+                this.inSelectState = false;
                 return;
             }
+            console.log('show delete confirm');
             this.showDeleteConfirm = true;
         }
 
 
         onCategoryClicked(category: string, index: number) {
-            if (this.inDeleteState === false) {
+            if (this.inSelectState === false) {
                 return;
             }
             if (event && event.target && (event.target as Element).className.indexOf('categorySelected') >= 0) {
                 (event.target as Element).className = 'categoryWrapper categoryNotSelected';
-                const index = this.selectedList.indexOf(category)
-                this.selectedList.splice(index,1);
+                const index = this.selectedList.indexOf(category);
+                this.selectedList.splice(index, 1);
             } else if (event) {
                 (event.target as Element).className = 'categoryWrapper categorySelected';
                 this.selectedList.push(category);
@@ -131,7 +151,7 @@
             this.$store.commit('fetchCategories');
         }
 
-        @Watch('inDeleteState')
+        @Watch('inSelectState')
         onInDeleteStateChanged(val: boolean) {
             if (val === false) {
                 document.querySelectorAll('.categories .categoryWrapper').forEach(node => {
@@ -207,41 +227,17 @@
         color: $color-background-grey;
     }
 
-    .deleteConfirmDialog {
-        z-index: 300;
-        background-color: white;
+    .addCategory{
+        color: $color-green;
+        font-size: 3rem;
         position: absolute;
-        width: 80%;
-        top: 50%;
-        left: 10%;
-        transform: translateY(-50%);
-        padding: 1rem;
-        text-align: left;
-
-        .deleteConfirmDialog-title {
-            margin-bottom: 1rem;
-        }
-
-        .deleteConfirmDialog-content {
-            margin-bottom: 1rem;
-        }
-
-        .deleteConfirmDialog-buttons {
-            display: flex;
-            justify-content: space-around;
-
-            button {
-                width: 100%;
-                padding: 1rem;
-            }
-
-            :first-child {
-                color: $color-nav-grey;
-            }
-
-            :last-child {
-                color: $color-green;
-            }
-        }
+        bottom: 5vh;
+        right: 8vw;
+        background-color: white;
+        /*width: 3rem;*/
+        /*height: 3rem;*/
+        border-radius: 50%;
+        box-shadow: 0 2px 2px 2px $color-background-grey;
     }
+
 </style>

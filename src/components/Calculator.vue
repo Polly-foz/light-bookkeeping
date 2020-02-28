@@ -32,7 +32,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import {formatFloat} from '@/helper/helper';
+    import {formatFloat} from '@/lib/stringHelper';
     import {Component, Prop} from 'vue-property-decorator';
 
     @Component

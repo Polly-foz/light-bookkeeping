@@ -28,8 +28,11 @@ export default {
         addCategory(state: StateType, payload: { category: string; type: ('income' | 'expenditure') }) {
             // console.log('addCategory');
             const {category, type} = payload;
-            if (state[type].indexOf(category) >= 0 || !category) {
-                return;
+            if (state[type].indexOf(category) >= 0) {
+                throw new Error("创建分类失败，该分类名已存在！")
+            }
+            if(!category){
+                throw new Error("创建分类失败，分类名不能为空！")
             }
             state[type].push(category);
             // @ts-ignore
@@ -59,9 +62,11 @@ export default {
         },
         editCategory(state: StateType, payload: { oldName: string; newName: string; type: ('income' | 'expenditure') }) {
             const {oldName, newName, type} = payload;
+            if(newName===''){
+                throw new Error("分类名不能为空")
+            }
             if (state[type].indexOf(newName) >= 0) {
                 throw new Error(`编辑失败：新的分类名${newName}已存在。`);
-                return;
             }
             const index = state[type].indexOf(oldName);
             if (index < 0) {

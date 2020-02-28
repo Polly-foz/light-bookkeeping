@@ -1,5 +1,5 @@
-interface Category {
-    id: string
+interface Transaction {
+    id: number
     type: string
     money: number
     category: string

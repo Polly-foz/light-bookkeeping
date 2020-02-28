@@ -5,9 +5,11 @@ import transactions from '@/store/modules/transactions';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
     modules: {
         categories,
         transactions
     }
 });
+
+export default store
