@@ -75,8 +75,13 @@
         }
 
         onSave() {
+            this.$store.commit('addTransaction', {
+                money: this.money,
+                type: this.type,
+                category: this.category,
+                note: this.note
+            });
             this.$router.go(-1);
-            // console.log(transactionsModel.fetch())
         }
 
         beforeCreate() {

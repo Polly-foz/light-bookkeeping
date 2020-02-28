@@ -61,7 +61,7 @@
         showNoteSettingDialog = false;
         showCategorySelectDialog = false;
         showCalculator = false;
-        date = dateHelper.date(this.transaction.date);
+        date = dateHelper.chineseDate(this.transaction.date);
         time = dateHelper.time(this.transaction.date);
         note = this.transaction.note;
         category = this.transaction.category;
@@ -87,8 +87,8 @@
         }
 
         deleteTransaction() {
-            this.$store.commit('deleteTransaction', this.id);
             this.showDeleteConfirmDialog = false;
+            this.$store.commit('deleteTransaction', this.id);
             this.$router.go(-1);
         }
 

@@ -5,7 +5,7 @@
                 删除分类
             </h1>
             <div class="deleteConfirmDialog-content">
-                将删除{{selectedListLength}}个分类
+                将删除{{selectedListLength}}个分类和{{selectedTransactionsLength}}个交易
             </div>
             <div class="deleteConfirmDialog-buttons">
                 <button @click="$emit('update:isShow', false)">取消</button>
@@ -18,7 +18,7 @@
 <script>
     export default {
         name: "DeleteConfirmDialog",
-        props: ['selectedListLength']
+        props: ['selectedListLength','selectedTransactionsLength']
     }
 </script>
 

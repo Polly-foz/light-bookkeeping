@@ -28,12 +28,14 @@
             </div>
         </main>
 
-        <EditDialog :oldName="selectedList[0]" :isShow.sync="showEditDialog"
+        <EditDialog :selectedTransactionsLength="selectedTransactionsLength" :oldName="selectedList[0]" :isShow.sync="showEditDialog"
                     v-on:editCategory="editCategory"></EditDialog>
-        <DeleteConfirmDialog :selected-list-length="selectedList.length" :isShow.sync="showDeleteConfirm"
+        <DeleteConfirmDialog :selectedTransactionsLength="selectedTransactionsLength" :selected-list-length="selectedList.length" :isShow.sync="showDeleteConfirm"
                              v-on:deleteCategories="deleteCategories"></DeleteConfirmDialog>
         <AddDialog :type="type" :isShow.sync="showAddDialog" v-on:addCategory="addCategory"></AddDialog>
-        <button v-if="!inSelectState" @click="showAddDialog=true"><Icon name="add" class="addCategory"/></button>
+        <button v-if="!inSelectState" @click="showAddDialog=true">
+            <Icon name="add" class="addCategory"/>
+        </button>
     </LayoutWithBackAndTitle>
 </template>
 
@@ -46,7 +48,7 @@
     import AddDialog from '@/components/categories/AddDialog.vue';
 
     @Component({
-        components: {DeleteConfirmDialog, EditDialog,AddDialog}
+        components: {DeleteConfirmDialog, EditDialog, AddDialog}
     })
     export default class Categories extends Vue {
         currentTypeIndex = 0;
@@ -75,6 +77,13 @@
             return false;
         }
 
+        get selectedTransactionsLength() {
+            return this.$store.getters.categoriesRelatedTransactionsAmount({
+                categories: this.selectedList,
+                type: this.type
+            });
+        }
+
         addCategory(name: string) {
             // console.log(newName);
             try {
@@ -91,7 +100,7 @@
             try {
                 this.$store.commit('editCategory', {type: this.type, oldName: this.selectedList[0], newName: newName});
                 this.showEditDialog = false;
-                this.changeState(true)
+                this.changeState(true);
             } catch (error) {
                 window.alert(error);
             }
@@ -99,11 +108,11 @@
         }
 
         deleteCategories() {
-            //TODO delete
             this.$store.commit('deleteCategories', {type: this.type, categories: this.selectedList});
             this.selectedList.splice(0, this.selectedList.length);
             this.showDeleteConfirm = false;
             this.inSelectState = false;
+            this.$router.push('/home');
         }
 
 
@@ -227,7 +236,7 @@
         color: $color-background-grey;
     }
 
-    .addCategory{
+    .addCategory {
         color: $color-green;
         font-size: 3rem;
         position: absolute;

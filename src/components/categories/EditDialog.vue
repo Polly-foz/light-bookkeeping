@@ -4,6 +4,9 @@
             <h1 class="title">
                 重命名
             </h1>
+            <div class="content">
+                将影响{{selectedTransactionsLength}}个交易
+            </div>
             <input class="note" type="text" :placeholder="oldName" v-model="newName">
             <button @click="onCompleted">完成</button>
         </div>
@@ -17,6 +20,7 @@
     @Component
     export default class EditDialog extends Vue {
         @Prop(String) readonly oldName: string | undefined;
+        @Prop(Number) readonly selectedTransactionsLength: number | undefined;
 
         newName = '';
 
@@ -44,7 +48,9 @@
         .title {
             margin-bottom: 1rem;
         }
-
+        .content{
+            margin-bottom: 1rem;
+        }
         .note {
             width: 100%;
             border-bottom: 1px solid $color-green;

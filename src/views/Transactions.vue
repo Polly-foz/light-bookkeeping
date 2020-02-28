@@ -34,8 +34,8 @@
                     <div class="sum">{{sum(transactionsTable[date])}}</div>
                 </div>
                 <ol class="groupContent">
-                    <li class="transaction" v-for="(transaction,index) in transactionsTable[date].reverse()"
-                        :key="index">
+                    <li class="transaction" v-for="transaction in transactionsTable[date].reverse()"
+                        :key="transaction.id" @click="onTransactionClicked(transaction.id)">
                         <div class="left">
                             <div class="category">
                                 {{transaction.category}}
@@ -94,6 +94,10 @@
 
         get totalAmount() {
             return this.$store.getters.scopedTotalAmount(this.scope);
+        }
+
+        onTransactionClicked(id: number){
+            this.$router.push({path: 'transaction', query: {id: id.toString()}});
         }
 
         notLessThanZero(num: number) {

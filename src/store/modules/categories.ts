@@ -47,6 +47,8 @@ export default {
             categories.forEach(item => {
                 const index = state[type].indexOf(item);
                 if (index >= 0) {
+                    //@ts-ignore
+                    this.commit('deleteTransactionsOnCategoryDeleted',{category: item, type:type});
                     state[type].splice(index, 1);
                 }
             });
@@ -59,7 +61,8 @@ export default {
             if (index < 0) {
                 return;
             }
-            //TODO delete related transactions
+            //@ts-ignore
+            this.commit('deleteTransactionsOnCategoryDeleted',payload);
             state[type].splice(index, 1);
             // @ts-ignore
             this.commit('saveCategories');
@@ -76,7 +79,8 @@ export default {
             if (index < 0) {
                 return;
             }
-            //TODO edit related transactions
+            // @ts-ignore
+            this.commit('editTransactionsOnCategoryChanged', {oldv: oldName, newv: newName, type: type});
             state[type][index] = newName;
             // @ts-ignore
             this.commit('saveCategories');

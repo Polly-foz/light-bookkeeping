@@ -31,7 +31,7 @@ function initialTransactions() {
             id: createId(),
             type: 'income',
             money: 2.3,
-            category: '生活用品',
+            category: '奖金',
             note: 'aaa',
             date: dayjs().subtract(1, 'month').toISOString()
         },

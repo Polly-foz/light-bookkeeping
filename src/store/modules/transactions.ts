@@ -38,8 +38,8 @@ export default {
                 };
             };
         },
-        scopedTotalAmount(state: StateType, getters: { scopedTransactions: (arg0: string | undefined) => Transaction[] }) {
-            return function (scope: ('day' | 'week' | 'month' | 'year' | undefined)) {
+        scopedTotalAmount(state: StateType, getters: { scopedTransactions: (arg0: string | null | undefined) => Transaction[] }) {
+            return function (scope: ('day' | 'week' | 'month' | 'year' | null | undefined)) {
                 let income = 0;
                 let expenditure = 0;
                 getters.scopedTransactions(scope).forEach((transaction: Transaction) => {
@@ -57,7 +57,7 @@ export default {
             };
         },
         scopedTransactions(state: StateType) {
-            return function (scope: ('day' | 'week' | 'month' | 'year' | '' | undefined)) {
+            return function (scope: ('day' | 'week' | 'month' | 'year' | '' | null | undefined)) {
                 const now = dayjs();
                 if (scope === '' || !scope) {
                     return state.transactions;
@@ -70,18 +70,20 @@ export default {
         transactionsGroupedByDate(state: StateType) {
             const hashTable: { [propName: string]: Transaction[] } = {};
             state.transactions.forEach((transaction) => {
-                const [date, time] = transaction.date.split('T');
+                const date = dateHelper.date(transaction.date);
                 hashTable[date] = hashTable[date] || [];
                 hashTable[date].push(transaction);
             });
             return hashTable;
         },
         scopedTransactionsGroupedByDate(state: StateType,) {
-            return function (scope: ('day' | 'week' | 'month' | 'year' | '' | undefined)) {
+            return function (scope: ('day' | 'week' | 'month' | 'year' | '' | null | undefined)) {
                 const hashTable: { [propName: string]: Transaction[] } = {};
                 state.transactions.forEach((transaction) => {
-                    const [date, time] = transaction.date.split('T');
+                    const date = dateHelper.date(transaction.date);
+                    // console.log('date: ' + date);
                     if (dateHelper.inThisScope(date, scope)) {
+                        // console.log('in scope');
                         hashTable[date] = hashTable[date] || [];
                         hashTable[date].push(transaction);
                     }
@@ -90,13 +92,27 @@ export default {
             };
         },
         dateArray(state: StateType, getters: { transactionsGroupedByDate: any }) {
-            return function (scope: ('day' | 'week' | 'month' | 'year' | undefined)) {
+            return function (scope: ('day' | 'week' | 'month' | 'year' | '' | null | undefined)) {
+                // console.log('dateArray: ' + scope);
                 const ret: string[] = Object.getOwnPropertyNames(getters.transactionsGroupedByDate).reverse();
                 return ret.filter(date => {
                     return dateHelper.inThisScope(date, scope);
                 });
             };
         },
+        categoriesRelatedTransactionsAmount(state: StateType) {
+            return function (arg: { categories: string[]; type: string }) {
+                let cnt = 0;
+                state.transactions.forEach(transaction => {
+                    arg.categories.forEach(category => {
+                        if (transaction.category === category && transaction.type === arg.type) {
+                            cnt++;
+                        }
+                    });
+                });
+                return cnt;
+            };
+        }
     },
     mutations: {
         fetchTransactions(state: StateType) {
@@ -147,8 +163,18 @@ export default {
             type && (state.transactions[index].type = transaction.type);
             money && (state.transactions[index].money = transaction.money);
             category && (state.transactions[index].category = transaction.category);
-            (note||note==='') && (state.transactions[index].note = transaction.note);
+            (note || note === '') && (state.transactions[index].note = transaction.note);
             date && (state.transactions[index].date = transaction.date);
+            // @ts-ignore
+            this.commit('saveTransactions');
+        },
+        editTransactionsOnCategoryChanged(state: StateType, payload: { oldv: string; newv: string; type: string }) {
+            const {oldv, newv, type} = payload;
+            state.transactions.forEach((transaction) => {
+                if (transaction.category === oldv && transaction.type === type) {
+                    transaction.category = newv;
+                }
+            });
             // @ts-ignore
             this.commit('saveTransactions');
         },
@@ -161,6 +187,14 @@ export default {
             // @ts-ignore
             this.commit('saveTransactions');
         },
+        deleteTransactionsOnCategoryDeleted(state: StateType, payload: { category: string; type: string }) {
+            const {category, type} = payload;
+            state.transactions = state.transactions.filter((transaction) => {
+                return transaction.category !== category || transaction.type !== type;
+            });
+            // @ts-ignore
+            this.commit('saveTransactions');
+        }
 
     }
 };

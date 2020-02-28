@@ -2,12 +2,15 @@ import dayjs from 'dayjs';
 
 const dateHelper = {
     date(dayStr: string) {
+        return dayjs(dayStr).format('YYYY-MM-DD');
+    },
+    chineseDate(dayStr: string) {
         return dayjs(dayStr).format('M月D日');
     },
     time(dayStr: string) {
         return dayjs(dayStr).format('HH:mm');
     },
-    inThisScope(date: string, unit: ('day' | 'week' | 'month' | 'year' | '' | undefined)) {
+    inThisScope(date: string, unit: ('day' | 'week' | 'month' | 'year' | '' | null | undefined)) {
         if (!unit) {
             return true;
         }
