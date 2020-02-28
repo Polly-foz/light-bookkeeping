@@ -3,7 +3,7 @@
         <template v-slot:title>{{title}}</template>
         <div>
             <div class="groupTitle">
-                <div class="date">共计笔交易</div>
+                <div class="date">共计{{transactions.length}}笔交易</div>
             </div>
             <ol class="groupContent">
                 <li class="totalAmount">
@@ -21,7 +21,8 @@
                 <li class="totalAmount">
                     <div class="left">结余</div>
                     <div :class={money:true,income:notLessThanZero(totalAmount.balance)}>
-                        <span v-if="totalAmount.balance < 0">-</span>¥{{totalAmount.balance >= 0 ? totalAmount.balance : -totalAmount.balance}}
+                        <span v-if="totalAmount.balance < 0">-</span>¥{{totalAmount.balance >= 0 ? totalAmount.balance :
+                        -totalAmount.balance}}
                     </div>
                 </li>
             </ol>
@@ -44,7 +45,7 @@
                             </div>
                         </div>
                         <div :class={money:true,income:isIncome(transaction.type)}>
-                            <span v-if="transaction.type==='支出'">-</span>¥{{transaction.money}}
+                            <span v-if="transaction.type==='expenditure'">-</span>¥{{formatFloat(transaction.money,2)}}
                         </div>
                     </li>
                 </ol>
@@ -77,6 +78,10 @@
                 default:
                     return '所有交易';
             }
+        }
+
+        get transactions(){
+            return this.$store.getters.scopedTransactions(this.scope)
         }
 
         get transactionsTable() {
@@ -119,6 +124,10 @@
             }
         }
 
+        formatFloat(value: number, n: number) {
+            return formatFloat(value, n);
+        }
+
         beforeCreate() {
             this.$store.commit('fetchTransactions');
             this.$store.commit('fetchCategories');
@@ -139,7 +148,7 @@
         color: $color-nav-grey;
     }
 
-    .groupContent .totalAmount{
+    .groupContent .totalAmount {
         padding: 1rem;
     }
 

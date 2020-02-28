@@ -1,28 +1,29 @@
 <template>
     <DialogWithCover v-bind="$attrs" v-on="$listeners">
-        <div class="addDialog">
+        <div class="noteSettingDialog">
             <h1 class="title">
-                重命名
+                备注
             </h1>
-            <input class="note" type="text" :placeholder="oldName" v-model="newName">
-            <button @click="onCompleted">完成</button>
+            <input class="note" type="text" value="note" v-model="note_">
+            <button @click="onOkClicked">完成</button>
         </div>
     </DialogWithCover>
 </template>
 
 <script lang="ts">
+
     import {Component, Prop} from 'vue-property-decorator';
     import Vue from 'vue';
 
     @Component
-    export default class EditDialog extends Vue {
-        @Prop(String) readonly oldName: string | undefined;
+    export default class NoteSettingDialog extends Vue {
+        @Prop(String) note: string | undefined;
 
-        newName = '';
+        note_ = this.note;
 
-        onCompleted() {
-            this.$emit('editCategory', this.newName);
-            this.newName = '';
+        onOkClicked(){
+            this.$emit('update:note',this.note_)
+            this.$emit('update:isShow',false)
         }
     }
 </script>
@@ -30,7 +31,7 @@
 <style lang="scss" scoped>
     @import "~@/assets/style/helper.scss";
 
-    .addDialog {
+    .noteSettingDialog {
         z-index: 300;
         background-color: white;
         position: absolute;
@@ -38,8 +39,8 @@
         top: 50%;
         left: 10%;
         transform: translateY(-50%);
-        padding: 1rem;
         text-align: left;
+        padding: 0.5rem;
 
         .title {
             margin-bottom: 1rem;
@@ -57,5 +58,4 @@
             padding: 1rem;
         }
     }
-
 </style>

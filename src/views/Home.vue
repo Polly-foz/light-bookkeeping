@@ -17,7 +17,7 @@
         <button v-on:click="isShow = true">
             <Icon name="add" class="addTransaction"/>
         </button>
-        <Calculator :is-show.sync="isShow" v-on:onOkClick="onOkClick"></Calculator>
+        <Calculator :is-show.sync="isShow" v-on:onCalculatorOkClicked="onCalculatorOkClicked"></Calculator>
     </LayoutWithNav>
 </template>
 
@@ -32,9 +32,8 @@
     export default class Home extends Vue {
         isShow = false;
 
-        onOkClick(money: string) {
-            console.log(money);
-            this.$router.push({path: 'addTransaction', query: {money: money}});
+        onCalculatorOkClicked(money: number) {
+            this.$router.push({path: 'addTransaction', query: {money: money.toString()}});
         }
 
         test() {

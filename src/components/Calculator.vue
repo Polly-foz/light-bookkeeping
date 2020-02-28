@@ -44,7 +44,8 @@
         expression = '0';
         checkAndLinkTo() {
             if (!isNaN(Number(this.expression))) {//判断是否数字
-                this.$emit('onOkClick', formatFloat(Number(this.expression), 2));
+                this.$emit('update:isShow',false)
+                this.$emit('onCalculatorOkClicked', Number(this.expression));
                 // this.$router.push({path:'addtransaction', query: {money:Number(this.expression)}})
             }
         }

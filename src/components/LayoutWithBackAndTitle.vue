@@ -38,6 +38,7 @@
 
         back() {
             // this.$router.push("home")
+            this.$emit('onBackClicked')
             this.$router.go(-1);
         }
     }

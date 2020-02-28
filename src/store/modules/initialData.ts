@@ -56,7 +56,7 @@ function initialTransactions() {
             type: 'income',
             money: 500,
             category: '工资',
-            note: 'aaa',
+            note: '',
             date: dayjs().subtract(1, 'week').toISOString()
         },
         {
@@ -108,9 +108,9 @@ function initialTransactions() {
             date: dayjs().subtract(1, 'day').toISOString()
         },
         {id: createId(), type: 'income', money: 7, category: '利息', note: 'aaa', date: dayjs().toISOString()},
-        {id: createId(), type: 'income', money: 6, category: '利息', note: 'aaa', date: dayjs().toISOString()},
+        {id: createId(), type: 'income', money: 6, category: '利息', note: '', date: dayjs().toISOString()},
         {id: createId(), type: 'expenditure', money: 5, category: '生活用品', note: 'aaa', date: dayjs().toISOString()},
-        {id: createId(), type: 'expenditure', money: 15, category: '生活用品', note: 'aaa', date: dayjs().toISOString()},
+        {id: createId(), type: 'expenditure', money: 15, category: '生活用品', note: '', date: dayjs().toISOString()},
     ];
 }
 

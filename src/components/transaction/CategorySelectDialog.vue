@@ -24,7 +24,7 @@
         @Prop(String) readonly type: string | undefined;
 
         category = '';
-        categories = this.$store.state.categories.expenditure;
+        categories = (this.type && this.type === 'income') ? this.$store.state.categories.income : this.$store.state.categories.expenditure;
 
         get showAddOrManage() {//true:add, false:manage
             if (this.categories.length === 0 && this.category.length > 0) {
@@ -75,58 +75,10 @@
 
     }
 
-    /*export default {
-        name: "CategorySelectDialog",
-        data(){
-            return{
-                category: '',
-                categories: categoriesModel.fetch()[categoriesModel.constants.EXPENDITURE],
-                showAdd:false,
-                showManage:true,
-            }
-        },
-        props:["typeIndex"],
-        methods:{
-
-        },
-        watch:{
-            typeIndex(newv,oldv){
-                this.updateTags(categoriesModel.fetch()[categoriesModel.constants.TYPES[this.typeIndex]])
-            },
-            category(newv,oldv){
-                if(newv === ''){
-                    this.updateTags()
-                }else {
-                    this.updateTags(categoriesModel.fetch()[categoriesModel.constants.TYPES[this.typeIndex]].filter(item => item.indexOf(newv) >= 0))
-                }
-            },
-            categories(newv,oldv){
-                if(newv.length === 0){
-                    this.showAdd = true
-                    this.showManage = false
-                }else{
-                    this.showAdd = false
-                    this.showManage = true
-                }
-            }
-        },
-        created(){
-            return null;
-        },
-        mounted(){
-            return null;
-        },
-        updated(){
-           return null;
-        },
-        destroyed(){
-            return null;
-        }
-    }*/
 </script>
 
 <style lang="scss" scoped>
-    @import "@/assets/style/helper.scss";
+    @import "~@/assets/style/helper.scss";
 
     .categorySelectDialog {
         z-index: 300;
@@ -153,6 +105,7 @@
         overflow: auto;
         display: flex;
         flex-direction: column;
+        flex:1;
     }
 
     .category {

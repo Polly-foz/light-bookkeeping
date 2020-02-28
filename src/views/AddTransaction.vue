@@ -14,7 +14,7 @@
         <main>
             <div class="moneyWrapper inputWrapper" @click="showCalculator=true">
                 <span v-if="currentTypeIndex===0">-</span>
-                <span>¥{{money}}</span>
+                <span>¥{{formatFloat(money,2)}}</span>
             </div>
 
             <div class="inputWrapper" @click="showCategoryDialog=true">
@@ -31,7 +31,7 @@
         </main>
 
         <button class="saveButton" @click="onSave">保存</button>
-        <Calculator :is-show.sync="showCalculator" v-on:onOkClick="onOkClick"></Calculator>
+        <Calculator :is-show.sync="showCalculator" v-on:onCalculatorOkClicked="onCalculatorOkClicked"></Calculator>
         <CategorySelectDialog :type="type" :isShow.sync="showCategoryDialog"
                               v-on:update:category="(category)=>this.category=category"></CategorySelectDialog>
     </LayoutWithBackAndTitle>
@@ -41,8 +41,9 @@
     import Calculator from '@/components/Calculator.vue';
     import Vue from 'vue';
     import {Component, Watch} from 'vue-property-decorator';
-    import CategorySelectDialog from '@/components/add-transaction/CategorySelectDialog.vue';
+    import CategorySelectDialog from '@/components/transaction/CategorySelectDialog.vue';
     import {getQueryString} from '@/lib/urlHelper';
+    import {formatFloat} from '@/lib/stringHelper';
 
     // 下面的代码解决弹出键盘时，按钮向上移动
     const h = document.body.scrollHeight;
@@ -57,7 +58,7 @@
         components: {Calculator, CategorySelectDialog}
     })
     export default class AddTransaction extends Vue {
-        money = getQueryString('money');
+        money = Number(getQueryString('money'));
         currentTypeIndex = 0;
         showCalculator = false;
         category = this.$store.state.categories[this.type][0];
@@ -68,7 +69,7 @@
             return ['expenditure', 'income'][this.currentTypeIndex];
         }
 
-        onOkClick(money: string) {
+        onCalculatorOkClicked(money: number) {
             this.money = money;
             this.showCalculator = false;
         }
@@ -83,6 +84,10 @@
             //test
             // this.$store.commit('addCategory',{type:'expenditure',category:'cola'})
             // this.$store.commit('editCategory',{type:'expenditure',oldName:'cola',newName:'hhh'})
+        }
+
+        formatFloat(value: number, n: number) {
+            return formatFloat(value, n);
         }
 
         @Watch('currentTypeIndex')

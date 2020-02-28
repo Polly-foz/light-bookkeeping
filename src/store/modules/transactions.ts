@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import {initialTransactions} from '@/store/modules/initialData';
 import createId from '@/lib/createId';
 import dateHelper from '@/lib/dateHelper';
+import {formatFloat} from '@/lib/stringHelper';
 
 const localStorageKeyName = 'transactions';
 
@@ -14,40 +15,45 @@ export default {
         transactions: []
     } as StateType,
     getters: {
+        getTransactionById(state: StateType) {
+            return function (id: number) {
+                return state.transactions.find(transaction => (transaction.id === id));
+            };
+        },
         totalAmountFromTransactions() {
             return function (transactions: Transaction[]) {
-                const res = {
-                    income: 0,
-                    expenditure: 0,
-                    balance: 0
-                };
+                let income = 0;
+                let expenditure = 0;
                 transactions.forEach(transaction => {
                     if (transaction.type === 'income') {
-                        res.income += transaction.money;
+                        income += transaction.money;
                     } else if (transaction.type === 'expenditure') {
-                        res.expenditure += transaction.money;
+                        expenditure += transaction.money;
                     }
                 });
-                res.balance = res.income - res.expenditure;
-                return res;
+                return {
+                    income: formatFloat(income, 2),
+                    expenditure: formatFloat(expenditure, 2),
+                    balance: formatFloat(income - expenditure, 2)
+                };
             };
         },
         scopedTotalAmount(state: StateType, getters: { scopedTransactions: (arg0: string | undefined) => Transaction[] }) {
             return function (scope: ('day' | 'week' | 'month' | 'year' | undefined)) {
-                const res = {
-                    income: 0,
-                    expenditure: 0,
-                    balance: 0
-                };
+                let income = 0;
+                let expenditure = 0;
                 getters.scopedTransactions(scope).forEach((transaction: Transaction) => {
                     if (transaction.type === 'income') {
-                        res.income += transaction.money;
+                        income += transaction.money;
                     } else if (transaction.type === 'expenditure') {
-                        res.expenditure += transaction.money;
+                        expenditure += transaction.money;
                     }
                 });
-                res.balance = res.income - res.expenditure;
-                return res;
+                return {
+                    income: formatFloat(income, 2),
+                    expenditure: formatFloat(expenditure, 2),
+                    balance: formatFloat(income - expenditure, 2)
+                };
             };
         },
         scopedTransactions(state: StateType) {
@@ -101,6 +107,10 @@ export default {
             if (state.transactions.length === 0) {
                 state.transactions = initialTransactions();
             }
+            if (!localTransactions) {
+                //@ts-ignore
+                this.commit('saveTransactions');
+            }
         },
         saveTransactions(state: StateType) {
             localStorage.setItem(localStorageKeyName, JSON.stringify(state.transactions));
@@ -110,6 +120,9 @@ export default {
             if (this.state.categories[transaction.type].indexOf(transaction.category) < 0) {
                 //分类不存在
                 throw new Error(`添加失败：分类${transaction.category}不存在！`);
+            }
+            if (transaction.money < 0) {
+                throw new Error(`添加失败：金额不能为负`);
             }
             transaction.id = createId();
             transaction.date = dayjs().toISOString();
@@ -123,12 +136,19 @@ export default {
             if (index < 0) {
                 throw new Error(`修改失败，不存在该交易：${id}`);
             }
-            type || (transaction.type = state.transactions[index].type);
-            money || (transaction.money = state.transactions[index].money);
-            category || (transaction.category = state.transactions[index].category);
-            note || (transaction.note = state.transactions[index].note);
-            date || (transaction.date = state.transactions[index].date);
-            state.transactions[index] = transaction;
+            // @ts-ignore
+            if ((type === 'expenditure' && this.state.categories.expenditure.indexOf(category) < 0) || (type === 'income' && this.state.categories.income.indexOf(category) < 0)) {
+                //分类不存在
+                throw new Error(`修改失败：分类${transaction.category}不存在！`);
+            }
+            if (money < 0) {
+                throw new Error(`修改失败：金额不能为负`);
+            }
+            type && (state.transactions[index].type = transaction.type);
+            money && (state.transactions[index].money = transaction.money);
+            category && (state.transactions[index].category = transaction.category);
+            (note||note==='') && (state.transactions[index].note = transaction.note);
+            date && (state.transactions[index].date = transaction.date);
             // @ts-ignore
             this.commit('saveTransactions');
         },
