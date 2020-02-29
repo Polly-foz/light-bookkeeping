@@ -20,17 +20,20 @@
         </template>
         <main>
             <div class="categoriesWrapper">
-                <div class="categoryWrapper" v-for="(category,index) in categories" :key="category" :index="index"
-                     @click.self="onCategoryClicked(category,index)">
+                <div class="categoryWrapper" v-for="(category,index) in categories" :key="category"
+                     :id="'categoryWrapper' + index"
+                     @click="onCategoryClicked(category,'categoryWrapper' + index)">
                     <Icon name="checked" class="categoryItem"></Icon>
                     <button class="category categoryItem">{{category}}</button>
                 </div>
             </div>
         </main>
 
-        <EditDialog :selectedTransactionsLength="selectedTransactionsLength" :oldName="selectedList[0]" :isShow.sync="showEditDialog"
+        <EditDialog :selectedTransactionsLength="selectedTransactionsLength" :oldName="selectedList[0]"
+                    :isShow.sync="showEditDialog"
                     v-on:editCategory="editCategory"></EditDialog>
-        <DeleteConfirmDialog :selectedTransactionsLength="selectedTransactionsLength" :selected-list-length="selectedList.length" :isShow.sync="showDeleteConfirm"
+        <DeleteConfirmDialog :selectedTransactionsLength="selectedTransactionsLength"
+                             :selected-list-length="selectedList.length" :isShow.sync="showDeleteConfirm"
                              v-on:deleteCategories="deleteCategories"></DeleteConfirmDialog>
         <AddDialog :type="type" :isShow.sync="showAddDialog" v-on:addCategory="addCategory"></AddDialog>
         <button v-if="!inSelectState" @click="showAddDialog=true">
@@ -135,16 +138,19 @@
         }
 
 
-        onCategoryClicked(category: string) {
+        onCategoryClicked(category: string, id: string) {
             if (this.inSelectState === false) {
                 return;
             }
-            if (event && event.target && (event.target as Element).className.indexOf('categorySelected') >= 0) {
-                (event.target as Element).className = 'categoryWrapper categoryNotSelected';
+            const target = document.querySelector('#' + id);
+            if(!target)
+                return;
+            if (target.className.indexOf('categorySelected') >= 0) {
+                target.className = 'categoryWrapper categoryNotSelected';
                 const index = this.selectedList.indexOf(category);
                 this.selectedList.splice(index, 1);
-            } else if (event) {
-                (event.target as Element).className = 'categoryWrapper categorySelected';
+            } else{
+                target.className = 'categoryWrapper categorySelected';
                 this.selectedList.push(category);
             }
         }
