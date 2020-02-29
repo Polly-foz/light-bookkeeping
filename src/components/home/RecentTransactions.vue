@@ -34,17 +34,21 @@
 
     @Component
     export default class RecentTransactions extends Vue {
-        show = true;
 
         get date() {
             const x = this.$store.getters.dateArray().sort();
             if (!x || x.length === 0) {
-                this.show = false;
                 return null;
             } else {
-                this.show = true;
                 return x[x.length - 1];
             }
+        }
+
+        get show() {
+            if (this.date) {
+                return true;
+            }
+            return false;
         }
 
         get title() {
@@ -67,14 +71,14 @@
             }).reverse();
         }
 
-        beautifyTime(date: string){
-            switch(this.title){
+        beautifyTime(date: string) {
+            switch (this.title) {
                 case '今日交易':
                 case '昨日交易':
                 case '前日交易':
                     return dateHelper.time(date);
                 default:
-                    return dateHelper.chineseDate(date)
+                    return dateHelper.chineseDate(date);
             }
         }
 
@@ -82,7 +86,7 @@
             return str === 'income';
         }
 
-        onTransactionClicked(id: number){
+        onTransactionClicked(id: number) {
             this.$router.push({path: 'transaction', query: {id: id.toString()}});
         }
     }

@@ -131,12 +131,11 @@
                 this.inSelectState = false;
                 return;
             }
-            console.log('show delete confirm');
             this.showDeleteConfirm = true;
         }
 
 
-        onCategoryClicked(category: string, index: number) {
+        onCategoryClicked(category: string) {
             if (this.inSelectState === false) {
                 return;
             }
