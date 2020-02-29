@@ -1,6 +1,10 @@
 const path = require('path')
 
 module.exports = {
+    publicPath: process.env.NODE_ENV === 'production'
+        ? '/light-bookkeeping-website/'
+        : '/'
+    ,
     chainWebpack: config=>{
         //__dirname: current folder
         const dir = path.resolve(__dirname,'src/assets/icons')
