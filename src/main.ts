@@ -23,6 +23,6 @@ new Vue({
     render: h => h(App)
 }).$mount('#app');
 
-if (document.documentElement.clientHeight > 540) {
+if (document.documentElement.clientWidth > 540) {
     window.alert('建议使用手机打开本页面，以保证浏览效果');
 }

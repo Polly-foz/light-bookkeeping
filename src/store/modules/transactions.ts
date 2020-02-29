@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {initialTransactions} from '@/store/modules/initialData';
 import createId from '@/lib/createId';
 import dateHelper from '@/lib/dateHelper';
-import {formatFloat} from '@/lib/stringHelper';
+import {formatFloat, trimHeadAndTail} from '@/lib/stringHelper';
 
 const localStorageKeyName = 'transactions';
 
@@ -128,9 +128,13 @@ export default {
             localStorage.setItem(localStorageKeyName, JSON.stringify(state.transactions));
         },
         addTransaction(state: StateType, transaction: Transaction) {
+            transaction.category = trimHeadAndTail(transaction.category);
             // @ts-ignore
-            if (this.state.categories[transaction.type].indexOf(transaction.category) < 0) {
+            const categories = transaction.type === 'income' ? this.state.categories.income : this.state.categories.expenditure;
+            if (categories.indexOf(transaction.category) < 0) {
                 //分类不存在
+                console.log(categories.indexOf(transaction.category));
+                console.log(transaction.category);
                 throw new Error(`添加失败：分类${transaction.category}不存在！`);
             }
             if (transaction.money < 0) {

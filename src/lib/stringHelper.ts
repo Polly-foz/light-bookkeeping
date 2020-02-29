@@ -12,4 +12,10 @@ function formatFloat(value: number, n: number) {
     return s;
 }
 
+function trimHeadAndTail(str: string) { //去掉首尾两端的空格(^\s*)|(\s*$)
+    return str.replace(/(^\s*)|(\s*$)/g, '');
+}
+
 export {formatFloat};
+
+export {trimHeadAndTail}

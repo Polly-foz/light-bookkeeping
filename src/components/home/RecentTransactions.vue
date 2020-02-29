@@ -12,7 +12,7 @@
                         </div>
                     </div>
                     <div class="secondLine">
-                        <div class="note">{{transaction.note||transaction.type}}</div>
+                        <div class="note">{{transaction.note||{income:'收入',expenditure:'支出'}[transaction.type]}}</div>
                         <div class="time">{{beautifyTime(transaction.date)}}</div>
                     </div>
                 </div>

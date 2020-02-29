@@ -44,7 +44,7 @@
                                 {{transaction.category}}
                             </div>
                             <div class="note">
-                                {{transaction.note||transaction.type}}
+                                {{transaction.note||{income:'收入',expenditure:'支出'}[transaction.type]}}
                             </div>
                         </div>
                         <div :class={money:true,income:isIncome(transaction.type)}>
