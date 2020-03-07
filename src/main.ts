@@ -8,6 +8,7 @@ import LayoutWithNav from '@/components/LayoutWithNav.vue';
 import Icon from '@/components/Icon.vue';
 import LayoutWithBackAndTitle from '@/components/LayoutWithBackAndTitle.vue';
 import DialogWithCover from '@/components/DialogWithCover.vue';
+import {DatePicker,TimePicker} from 'element-ui';
 
 Vue.config.productionTip = false;
 
@@ -16,6 +17,8 @@ Vue.component('LayoutWithNav', LayoutWithNav);
 Vue.component('Icon', Icon);
 Vue.component('LayoutWithBackAndTitle', LayoutWithBackAndTitle);
 Vue.component('DialogWithCover', DialogWithCover);
+Vue.use(DatePicker);
+Vue.use(TimePicker);
 
 new Vue({
     router,
