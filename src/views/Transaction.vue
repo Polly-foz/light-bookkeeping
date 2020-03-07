@@ -17,11 +17,7 @@
                 </li>
                 <li>
                     <div class="title">日期</div>
-                    <div class="content">{{date}}</div>
-                </li>
-                <li>
-                    <div class="title">时间</div>
-                    <div class="content">{{time}}</div>
+                    <DateTimeSelectBar :originalDate="date" v-on:pick="getSelectedDate"></DateTimeSelectBar>
                 </li>
                 <li>
                     <div class="title">备注</div>
@@ -50,10 +46,11 @@
     import DeleteConfirmDialog from '@/components/transaction/DeleteConfirmDialog.vue';
     import NoteSettingDialog from '@/components/transaction/NoteSettingDialog.vue';
     import CategorySelectDialog from '@/components/transaction/CategorySelectDialog.vue';
+    import DateTimeSelectBar from '@/components/transaction/DateTimeSelectBar.vue';
     import Calculator from '@/components/Calculator.vue';
 
     @Component({
-        components: {Calculator, CategorySelectDialog, NoteSettingDialog, DeleteConfirmDialog}
+        components: {Calculator, CategorySelectDialog, NoteSettingDialog, DeleteConfirmDialog, DateTimeSelectBar}
     })
     export default class Transaction extends Vue {
         id = Number(getQueryString('id'));
@@ -61,19 +58,26 @@
         showNoteSettingDialog = false;
         showCategorySelectDialog = false;
         showCalculator = false;
-        date = dateHelper.chineseDate(this.transaction.date);
-        time = dateHelper.time(this.transaction.date);
+        // dateTime = dateHelper.chineseDateTime(this.transaction.date);
         note = this.transaction.note;
         category = this.transaction.category;
         money = this.transaction.money;
-
+        selectedDate = this.transaction.date;
 
         get transaction() {
             return this.$store.getters.getTransactionById(this.id);
         }
 
-        onCalculatorOkClicked(moneyStr: string){
-            this.money = Number(moneyStr)
+        get date() {
+            return dateHelper.dateTime(this.transaction.date);
+        }
+
+        getSelectedDate(date: Date) {
+            this.selectedDate = date.toISOString();
+        }
+
+        onCalculatorOkClicked(moneyStr: string) {
+            this.money = Number(moneyStr);
         }
 
         onBackClicked() {
@@ -81,6 +85,7 @@
                 id: this.id,
                 money: this.money,
                 category: this.category,
+                date: this.selectedDate,
                 note: this.note
             };
             this.$store.commit('editTransaction', newTransaction);

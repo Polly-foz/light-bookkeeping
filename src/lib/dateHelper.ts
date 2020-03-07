@@ -4,11 +4,17 @@ const dateHelper = {
     date(dayStr: string) {
         return dayjs(dayStr).format('YYYY-MM-DD');
     },
+    chineseDateTime(dayStr: string) {
+        return dayjs(dayStr).format('YYYY年M月D日 HH:mm');
+    },
     chineseDate(dayStr: string) {
         return dayjs(dayStr).format('M月D日');
     },
     time(dayStr: string) {
         return dayjs(dayStr).format('HH:mm');
+    },
+    dateTime(dayStr: string){
+        return dayjs(dayStr).format('YYYY-MM-DD HH:mm:ss');
     },
     inThisScope(date: string, unit: ('day' | 'week' | 'month' | 'year' | '' | null | undefined)) {
         if (!unit) {

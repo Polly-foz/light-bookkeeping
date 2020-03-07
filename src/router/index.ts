@@ -7,7 +7,7 @@ import Transactions from '@/views/Transactions.vue'
 import Transaction from '@/views/Transaction.vue'
 import Categories from '@/views/Categories.vue'
 import NotFound from '@/views/NotFound.vue'
-
+import Test from '@/views/Test.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +39,10 @@ const routes = [
   {
     path: '/categories',
     component: Categories
+  },
+  {
+    path: '/test',
+    component: Test
   },
   {
     path: '*',
