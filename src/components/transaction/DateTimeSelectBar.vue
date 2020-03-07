@@ -7,6 +7,7 @@
                 :default-value="originalDate"
                 align="right"
                 :picker-options="pickerOptions1"
+                :editable="false"
                 @change="$emit('pick',date)">
         </el-date-picker>
     </div>
