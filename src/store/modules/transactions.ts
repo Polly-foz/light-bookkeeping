@@ -133,8 +133,6 @@ export default {
             const categories = transaction.type === 'income' ? this.state.categories.income : this.state.categories.expenditure;
             if (categories.indexOf(transaction.category) < 0) {
                 //分类不存在
-                console.log(categories.indexOf(transaction.category));
-                console.log(transaction.category);
                 throw new Error(`添加失败：分类${transaction.category}不存在！`);
             }
             if (transaction.money < 0) {
