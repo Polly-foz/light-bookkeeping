@@ -12,6 +12,7 @@
     "babel-preset-es2015": "^6.24.1",
     "core-js": "^3.6.4",
     "dayjs": "^1.8.21",
+    "echarts": "^4.6.0",
     "element-ui": "^2.13.0",
     "register-service-worker": "^1.6.2",
     "svg-sprite-loader": "^4.2.1",

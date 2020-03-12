@@ -21,7 +21,6 @@
     @Component
     export default class DataTimeSelectBar extends Vue {
         @Prop(String) originalDate: string | undefined;
-
         date = '';
         pickerOptions1 = {
             shortcuts: [{
@@ -58,4 +57,9 @@
         left: 10%;
         transform: translateY(-50%);
     }
+
+    .datePicker {
+        border: 1px solid red;
+    }
+
 </style>
